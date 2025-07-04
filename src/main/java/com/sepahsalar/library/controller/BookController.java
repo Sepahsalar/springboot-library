@@ -3,6 +3,8 @@ package com.sepahsalar.library.controller;
 import com.sepahsalar.library.model.Book;
 import com.sepahsalar.library.repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -49,4 +51,12 @@ public class BookController {
 	public void deleteBook(@PathVariable Long id) {
 		bookRepository.deleteById(id);
 	}
+
+	@ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<String> handleNotFound(RuntimeException ex) {
+        if (ex.getMessage().equals("Book not found")) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Book not found");
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal error");
+    }
 }
